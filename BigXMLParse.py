@@ -11,6 +11,7 @@ def node_processing(xml):
     for table in xml.iter('place'):
         for child in table:
             mas[child.tag] = child.text
+
     if mas['region_code'] != '43':
         return
 
@@ -18,7 +19,9 @@ def node_processing(xml):
         for child in table:
             if child.tag != 'place':
                 mas[child.tag] = child.text
- #   print(mas)
+    # print(mas)
+    mas['check_url'] = 'https://reestr-svyaz.rkn.gov.ru/place/' + \
+        mas['place_id'] + '.htm'
     return mas
 ##############################################################################################
 
@@ -29,9 +32,9 @@ def RightField(fname):
            'gsm_type', 'is_umts', 'is_lte',
            'etv_d_channel_cnt',
            'is_local_station',
-           'payphone_count']
+           'payphone_count', 'check_url']
     for x in mas:
-        # print(x,fname)
+        # print(x)
         if fname == x:
             return True
     return False
@@ -40,7 +43,6 @@ def RightField(fname):
 
 def form_record(mas, number):
     line = ''
-    line1 = ''
     sep = ';'
     for x in mas:
         if RightField(x):
@@ -126,7 +128,21 @@ def sum_mas(mas, tmp):
 ##############################################################################################
 
 
+def shapka_record():
+    # 'place_id', 'fias_guid', 'region_code', 'region_name', 'city', 'rayon', 'place', 'os_name',
+    #        'is_tm', 'tm_max_access_speed', 'tm_type',
+    #        'gsm_type', 'is_umts', 'is_lte',
+    #        'etv_d_channel_cnt',
+    #        'is_local_station',
+    #        'payphone_count', 'check_url'
+    line = '№;Уникальный идентификатор населенного пункта в информационной системе Роскомнадзора;Код ФИАС;Код региона;Наименование региона;Город;Район;Населенный пункт;Тип населенного пункта;Оператор связи;Телематические услуги связи;Ссылка на страницу проверки'
+    return line
+
+##############################################################################################
+
+
 def main():
+    # ищем тот самый файл с расширением xml
     listOfFiles = os.listdir('.')
     pattern = "*.xml"
     for entry in listOfFiles:
@@ -140,6 +156,9 @@ def main():
     fias_guid = ''
     number = 0
     with open(xml_file, 'r', encoding='utf-8') as f, open('43reg.csv', 'w', encoding='utf-8') as fw:
+       
+        # fw.write(shapka_record())
+
         for line in f:
             line = line.lstrip('\t ')
             line = line.rstrip('\n ')
@@ -149,7 +168,6 @@ def main():
                 stat = True
 
             if line == '</record>':
-
                 node = node + line
 
                 try:
@@ -180,6 +198,7 @@ def main():
     ed = datetime.datetime.now()
     print(bd)
     print(ed)
+    print(ed-bd)
     return
 
 
