@@ -148,8 +148,8 @@ def shapka_record():
 def main():
     if os.path.exists('./source_file') == False:
         os.mkdir("source_file")
-    if os.path.exists('./processed_files') == False:
-        os.mkdir("processed_files")
+    if os.path.exists('./processed_file') == False:
+        os.mkdir("processed_file")
 
     # ищем тот самый файл с расширением xml
     xml_file = ''
@@ -179,7 +179,7 @@ def main():
     count_iter = 0
 
     try:
-        with open('./source_file/%s'%xml_file, 'r', encoding='utf-8') as f, open('./processed_files/%s'%'itog.csv', 'w', encoding='windows-1251') as fw:
+        with open('./source_file/%s'%xml_file, 'r', encoding='utf-8') as f, open('./processed_file/%s'%'itog.csv', 'w', encoding='windows-1251') as fw:
 
             fw.write(shapka_record())
 
