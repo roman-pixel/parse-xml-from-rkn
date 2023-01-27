@@ -1,0 +1,5 @@
+**/processed_files
+**/source_file
+**/build
+**/dist
+*.spec
