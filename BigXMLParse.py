@@ -44,13 +44,17 @@ def RightField(fname):
 def form_record(mas, number):
     line = ''
     sep = ';'
+    arr = []
     for x in mas:
         if RightField(x):
             if mas[x] == None or mas[x] == '':
                 tmp = 0
             else:
                 tmp = mas[x]
+            tt = line
+            ttt = str(tmp)
             line = line + sep + str(tmp)
+            arr.append(x)
             # line1 = line1 + sep + x
     line = str(number) + line + '\n'
     # print(line1)
@@ -129,13 +133,9 @@ def sum_mas(mas, tmp):
 
 
 def shapka_record():
-    # 'place_id', 'fias_guid', 'region_code', 'region_name', 'city', 'rayon', 'place', 'os_name',
-    #        'is_tm', 'tm_max_access_speed', 'tm_type',
-    #        'gsm_type', 'is_umts', 'is_lte',
-    #        'etv_d_channel_cnt',
-    #        'is_local_station',
-    #        'payphone_count', 'check_url'
-    line = '№;Уникальный идентификатор населенного пункта в информационной системе Роскомнадзора;Код ФИАС;Код региона;Наименование региона;Город;Район;Населенный пункт;Тип населенного пункта;Оператор связи;Телематические услуги связи;Ссылка на страницу проверки'
+
+    line = '№;Уникальный идентификатор населенного пункта в информационной системе Роскомнадзора;Код ФИАС;Код региона;Наименование региона;Город;Район;Населенный пункт;Тип населенного пункта;Оператор связи;Услуги местной ТС;Телематические услуги связи;Телематические услуги связи: максимальная скорость передачи;Единица измерения;Наличие GSM;Наличие UMTS;Наличие LTE;Эфирное телевидение: количество цифровых каналов;Количество таксофонов;URL\n'
+    # line = '№;place_id;fias_guid;region_code;region_name;city;rayon;place;os_name;is_tm;tm_max_access_speed;tm_type;gsm_type;is_umts;is_lte;etv_d_channel_cnt;is_local_station;payphone_count;check_url\n'
     return line
 
 ##############################################################################################
@@ -156,8 +156,8 @@ def main():
     fias_guid = ''
     number = 0
     with open(xml_file, 'r', encoding='utf-8') as f, open('43reg.csv', 'w', encoding='utf-8') as fw:
-       
-        # fw.write(shapka_record())
+
+        fw.write(shapka_record())
 
         for line in f:
             line = line.lstrip('\t ')
