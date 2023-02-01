@@ -39,6 +39,8 @@ def edit_csv_file(csv_file, arr_id_url):
             file_reader = csv.reader(r_file, delimiter=";")
             itogi_new = []
             count = 0
+            count_find_iter = 0
+            count_huanter = 0
 
             spinner = Spinner('Обработка CSV файла ')
                       
@@ -55,8 +57,19 @@ def edit_csv_file(csv_file, arr_id_url):
                     if row[18] == j[1]:
                         row.insert(1, j[0])
                         itogi_new.append(row)
+                        count_find_iter = 0
+                        count_huanter += 1
                         break
+
+                    count_find_iter += 1
+
+                    if count_find_iter == len(arr_id_url):
+                        row.insert(1, '')
+                        itogi_new.append(row)
+                        count_find_iter = 0
+
             spinner.finish()
+            print ('Найдено %s записей' % count_huanter)
             print('Выполнено')
     except IOError:
         print("Файл itog.csv не найден")

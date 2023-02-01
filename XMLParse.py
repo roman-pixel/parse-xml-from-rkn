@@ -145,10 +145,13 @@ def shapka_record():
 
 
 def main():
-    if os.path.exists('./source_file') == False:
-        os.mkdir("source_file")
     if os.path.exists('./processed_file') == False:
         os.mkdir("processed_file")
+        print('Создана папка processed_file')
+    if os.path.exists('./source_file') == False:
+        os.mkdir("source_file")
+        print('Создана папка source_file. Поместите в нее файлы xml и xlsx для обработки и запустите программу еще раз')
+        return
 
     # ищем тот самый файл с расширением xml
     xml_file = ''
@@ -233,4 +236,3 @@ def main():
 
 ##############################################################################################
 main()
-input('Нажмите Enter для выхода.')
