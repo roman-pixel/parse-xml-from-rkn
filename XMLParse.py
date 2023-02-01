@@ -1,4 +1,3 @@
-from sys import stdout
 import datetime
 import xml.etree.ElementTree as ET
 import os
@@ -160,7 +159,7 @@ def main():
         if fnmatch.fnmatch(entry, pattern):
             count_of_xml_files += 1
 
-            if count_of_xml_files > 1:  
+            if count_of_xml_files > 1:
                 print('Найдено более одного файла с расширением xml')
                 return
 
@@ -175,11 +174,11 @@ def main():
     stat = False
     node = ''
     fias_guid = ''
-    number = 0
     count_iter = 0
+    lines=0
 
     try:
-        with open('./source_file/%s'%xml_file, 'r', encoding='utf-8') as f, open('./processed_file/%s'%'itog.csv', 'w', encoding='windows-1251') as fw:
+        with open('./source_file/%s' % xml_file, 'r', encoding='utf-8') as f, open('./processed_file/%s' % 'itog.csv', 'w', encoding='windows-1251') as fw:
 
             fw.write(shapka_record())
 
@@ -201,12 +200,12 @@ def main():
                         print(format(e.message))
 
                     mas = node_processing(xml)
+
                     if (mas):
                         count_iter += 1
                         # if (mas['is_tm']!=None):
                         if fias_guid != mas['fias_guid']:
-                            number += 1
-                            print(number, count)
+                            print("Количество записей: " + str(count_iter))
 
                             fw.write(form_record(mas, count_iter))
                             fias_guid = mas['fias_guid']
@@ -214,7 +213,7 @@ def main():
                         else:
                             fw.write(form_record(mas, count_iter))
 
-                    count = count + 1
+                    count += 1
                     node = ''
                     stat = False
 
@@ -225,7 +224,7 @@ def main():
 
     ed = datetime.datetime.now()
     # print(bd)
-    # print(ed)  
+    # print(ed)
     total_time = ed - bd
     print('Время выполения программы: ')
     print(total_time)
@@ -234,4 +233,4 @@ def main():
 
 ##############################################################################################
 main()
-input('Нажмите Enter для выхода')
+input('Нажмите Enter для выхода.')
