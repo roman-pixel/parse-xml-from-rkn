@@ -13,20 +13,21 @@ def write_xlsx_file(data):
     work_sheet.title = "Свод по операторам"
 
     # Заполняем шапку таблицы
-    work_sheet['A1'] = 'Населенный пункт'
-    work_sheet['B1'] = 'МТС GSM'
-    work_sheet['C1'] = 'МТС UMTS'
-    work_sheet['D1'] = 'МТС LTE'
-    work_sheet['E1'] = 'Билайн GSM'
-    work_sheet['F1'] = 'Билайн UMTS'
-    work_sheet['G1'] = 'Билайн LTE'
-    work_sheet['H1'] = 'Мегафон GSM'
-    work_sheet['I1'] = 'Мегафон UMTS'
-    work_sheet['J1'] = 'Мегафон LTE'
-    work_sheet['K1'] = 'Теле2 GSM'
-    work_sheet['L1'] = 'Теле2 UMTS'
-    work_sheet['M1'] = 'Теле2 LTE'
-    work_sheet['N1'] = 'Доп. информация'
+    work_sheet['A1'] = 'Код ФИАС'
+    work_sheet['B1'] = 'Населенный пункт'
+    work_sheet['C1'] = 'МТС GSM'
+    work_sheet['D1'] = 'МТС UMTS'
+    work_sheet['E1'] = 'МТС LTE'
+    work_sheet['F1'] = 'Билайн GSM'
+    work_sheet['G1'] = 'Билайн UMTS'
+    work_sheet['H1'] = 'Билайн LTE'
+    work_sheet['I1'] = 'Мегафон GSM'
+    work_sheet['J1'] = 'Мегафон UMTS'
+    work_sheet['K1'] = 'Мегафон LTE'
+    work_sheet['L1'] = 'Теле2 GSM'
+    work_sheet['M1'] = 'Теле2 UMTS'
+    work_sheet['N1'] = 'Теле2 LTE'
+    work_sheet['O1'] = 'Доп. информация'
 
     count = 0
     count_row = 2
@@ -50,37 +51,55 @@ def write_xlsx_file(data):
     # file_non_doubles.close()
 
     # print(*new_arr, sep='\n')
-    
+
     spinner = Spinner('Обработка данных: ')
 
     for i in mas:
         spinner.next()
 
-        work_sheet['A' + str(count_row)] = i[0]
+        work_sheet['A' + str(count_row)] = i[5]
+        work_sheet['B' + str(count_row)] = i[0]
 
         if 'МТС' in i[1] or 'мтс' in i[1]:
-            work_sheet['B' + str(count_row)] = i[2]
-            work_sheet['C' + str(count_row)] = i[3]
-            work_sheet['D' + str(count_row)] = i[4]
+            work_sheet['C' + str(count_row)] = i[2]
+            work_sheet['D' + str(count_row)] = i[3]
+            work_sheet['E' + str(count_row)] = i[4]
         if 'Вымпелк' in i[1]:
-            work_sheet['E' + str(count_row)] = i[2]
-            work_sheet['F' + str(count_row)] = i[3]
-            work_sheet['G' + str(count_row)] = i[4]
+            work_sheet['F' + str(count_row)] = i[2]
+            work_sheet['G' + str(count_row)] = i[3]
+            work_sheet['H' + str(count_row)] = i[4]
         if 'МегаФон' in i[1]:
-            work_sheet['H' + str(count_row)] = i[2]
-            work_sheet['I' + str(count_row)] = i[3]
-            work_sheet['J' + str(count_row)] = i[4]
+            work_sheet['I' + str(count_row)] = i[2]
+            work_sheet['J' + str(count_row)] = i[3]
+            work_sheet['K' + str(count_row)] = i[4]
         if 'Т2' in i[1]:
-            work_sheet['K' + str(count_row)] = i[2]
-            work_sheet['L' + str(count_row)] = i[3]
-            work_sheet['M' + str(count_row)] = i[4]
+            work_sheet['L' + str(count_row)] = i[2]
+            work_sheet['M' + str(count_row)] = i[3]
+            work_sheet['N' + str(count_row)] = i[4]
 
-        if i[0] != mas[count+1][0]:
+        # Доп. информация в таком виде устроит:
+        # МТС- GSM-900/1800;
+        # МТС- UMTS- нет;
+        # МТС- LTE - нет;
+        # Билайн - GSM-900;
+        # Билайн - UMTS- нет;
+        # Билайн - LTE - нет;
+        # Мегафон - GSM-нет;
+        # Мегафон - UMTS- нет;
+        # Мегафон - LTE - нет;
+        # Теле2 - GSM-нет;
+        # Теле2 - UMTS- нет;
+        # Теле2 - LTE - нет
+
+        if i[5] != mas[count+1][5]:
             for row in work_sheet.iter_rows(min_row=count_row, max_row=count_row, min_col=2, max_col=13):
                 for cell in row:
                     # print(cell.value)
                     if cell.value is None:
                         cell.value = 'нет'
+
+            # dop_info=
+
             count_row += 1
 
         if count < len(mas)-2:
@@ -106,7 +125,7 @@ def read_csv_file(file_name):
                 if count == 0:
                     count += 1
                     continue
-                data.append([row[7], row[8], row[13], row[14], row[15]])
+                data.append([row[7], row[8], row[13], row[14], row[15], row[2]])
     except IOError:
         print("Файл открыт в другой программе. Закройте файл и повторите попытку.")
         return
