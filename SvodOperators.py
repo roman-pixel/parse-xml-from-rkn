@@ -50,6 +50,7 @@ def write_xlsx_file(data):
     # file_non_doubles.close()
 
     # print(*new_arr, sep='\n')
+    
     spinner = Spinner('Обработка данных: ')
 
     for i in mas:
