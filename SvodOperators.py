@@ -77,20 +77,6 @@ def write_xlsx_file(data):
             work_sheet['M' + str(count_row)] = i[3]
             work_sheet['N' + str(count_row)] = i[4]
 
-        # Доп. информация в таком виде устроит:
-        # МТС- GSM-900/1800;
-        # МТС- UMTS- нет;
-        # МТС- LTE - нет;
-        # Билайн - GSM-900;
-        # Билайн - UMTS- нет;
-        # Билайн - LTE - нет;
-        # Мегафон - GSM-нет;
-        # Мегафон - UMTS- нет;
-        # Мегафон - LTE - нет;
-        # Теле2 - GSM-нет;
-        # Теле2 - UMTS- нет;
-        # Теле2 - LTE - нет
-
         if i[5] != mas[count+1][5]:
             for row in work_sheet.iter_rows(min_row=count_row, max_row=count_row, min_col=2, max_col=13):
                 for cell in row:

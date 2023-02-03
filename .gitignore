@@ -3,3 +3,8 @@
 **/build
 **/dist
 *.spec
+*.xlsx
+*.xls
+*.doc
+*.docx
+*.txt

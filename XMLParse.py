@@ -31,7 +31,7 @@ def RightField(fname):
            'gsm_type', 'is_umts', 'is_lte',
            'etv_d_channel_cnt',
            'is_local_station',
-           'payphone_count', 'check_url']
+           'payphone_count', 'ap_cnt', 'check_url']
     for x in mas:
         # print(x)
         if fname == x:
@@ -85,6 +85,9 @@ def sum_mas(mas, tmp):
 
     if mas['payphone_count'] == None or mas['payphone_count'] == '':
         mas['payphone_count'] = 0
+
+    if mas['ap_cnt'] == None or mas['ap_cnt'] == '':
+        mas['ap_cnt'] = 0
  ########
     if tmp['is_tm'] == None or tmp['is_tm'] == '':
         tmp['is_tm'] = 0
@@ -103,6 +106,9 @@ def sum_mas(mas, tmp):
 
     if tmp['payphone_count'] == None or tmp['payphone_count'] == '':
         tmp['payphone_count'] = 0
+
+    if mas['ap_cnt'] == None or mas['ap_cnt'] == '':
+        mas['ap_cnt'] = 0
 
   ############
     if tmp['is_tm'] == 0:
@@ -138,7 +144,7 @@ def sum_mas(mas, tmp):
 
 
 def shapka_record():
-    line = '№;Уникальный идентификатор населенного пункта в информационной системе Роскомнадзора;Код ФИАС;Код региона;Наименование региона;Город;Район;Населенный пункт;Оператор связи;Услуги местной ТС;Телематические услуги связи;Телематические услуги связи: максимальная скорость передачи;Единица измерения;Наличие GSM;Наличие UMTS;Наличие LTE;Эфирное телевидение: количество цифровых каналов;Количество таксофонов;URL\n'
+    line = '№;Уникальный идентификатор населенного пункта в информационной системе Роскомнадзора;Код ФИАС;Код региона;Наименование региона;Город;Район;Населенный пункт;Оператор связи;Услуги местной ТС;Телематические услуги связи;Телематические услуги связи: максимальная скорость передачи;Единица измерения;Наличие GSM;Наличие UMTS;Наличие LTE;Эфирное телевидение: количество цифровых каналов;Количество таксофонов;Количество точек доступа;URL\n'
     return line
 
 ##############################################################################################
@@ -178,7 +184,7 @@ def main():
     node = ''
     fias_guid = ''
     count_iter = 0
-    lines=0
+    lines = 0
 
     try:
         with open('./source_file/%s' % xml_file, 'r', encoding='utf-8') as f, open('./processed_file/%s' % 'itog.csv', 'w', encoding='windows-1251') as fw:
