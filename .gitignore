@@ -1,0 +1,10 @@
+**/processed_file
+**/source_file
+**/build
+**/dist
+*.spec
+*.xlsx
+*.xls
+*.doc
+*.docx
+*.txt
