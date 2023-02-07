@@ -1,12 +1,14 @@
 # XMLParse
 
+[![Button Icon]][Link] 
+
 ## Как пользоваться программой
 
 - Запустите программу. Она создаст 2 папки
 - Поместите файл с расширением '.xml' в папку source_file
-- Запустите программу, нажав на Xml Parser.exe
+- Запустите программу, нажав на XmlParse.exe
 - Дождитесь окончания обработки файла (может занять несколько минут)
-- Откройте папку processed_file, в которой будет находится выгрузка из xml (файл itog.csv)
+- Откройте папку processed_file, в которой будет находится выгрузка из xml (файл Выгрузка.csv) и обработанный файл (SvodOperators.xlsx)
 
 ## Файлы программ
 - XMLParse.py - программа для выгрузки данных из xml в формате csv
@@ -22,3 +24,6 @@ pyinstaller --onefile XMLParse.py SvodOperators.py
 ```
 
 Файлы программ указываются в порядке их выполнения
+
+[Button Icon]: https://img.shields.io/badge/Installation-EF2D5E?style=for-the-badge&logoColor=white&logo=DocuSign
+[Link]: https://disk.yandex.ru/d/y3RRJiChtpWCww
