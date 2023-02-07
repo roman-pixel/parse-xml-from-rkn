@@ -187,7 +187,7 @@ def main():
     lines = 0
 
     try:
-        with open('./source_file/%s' % xml_file, 'r', encoding='utf-8') as f, open('./processed_file/%s' % 'itog.csv', 'w', encoding='windows-1251') as fw:
+        with open('./source_file/%s' % xml_file, 'r', encoding='utf-8') as f, open('./processed_file/%s' % 'Выгрузка.csv', 'w', encoding='windows-1251') as fw:
 
             fw.write(shapka_record())
 

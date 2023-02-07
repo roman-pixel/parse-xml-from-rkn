@@ -274,13 +274,13 @@ def read_csv_file(file_name):
 def main():
     bd = datetime.datetime.now()
 
-    csv_file = './processed_file/%s' % 'itog.csv'
-    csv_file_dest = './source_file/%s' % 'itog.csv'
+    csv_file = './processed_file/%s' % 'Выгрузка.csv'
+    csv_file_dest = './source_file/%s' % 'Выгрузка.csv'
 
     try:
         shutil.copyfile(csv_file, csv_file_dest)
     except IOError:
-        print("\033[31mФайл itog.csv не найден\033[0m")
+        print("\033[31mФайл Выгрузка.csv не найден\033[0m")
         return
 
     write_xlsx_file(read_csv_file(csv_file_dest))
