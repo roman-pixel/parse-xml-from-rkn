@@ -8,7 +8,7 @@ import numpy as np
 import os
 
 # просто крутилка в консоли, а не о чем вы подумали
-spinner = Spinner('\033[43mОбработка данных:\033[0m')
+spinner = Spinner('Обработка данных:')
 
 
 def data_filter_max_speed(max_speed_data):
@@ -239,7 +239,7 @@ def write_xlsx_file(data):
         work_book.save('./processed_file/%s' % 'Свод по операторам.xlsx')
     except PermissionError:
         print(
-            "\033[31mФайл открыт в другой программе. Закройте файл и повторите попытку\033[0m")
+            "Файл открыт в другой программе. Закройте файл и повторите попытку")
         return
 
 
@@ -265,7 +265,7 @@ def read_csv_file(file_name):
 
     except IOError:
         print(
-            "\033[31mФайл открыт в другой программе. Закройте файл и повторите попытку\033[0m")
+            "Файл открыт в другой программе. Закройте файл и повторите попытку")
         return
 
     return data
@@ -280,7 +280,7 @@ def main():
     try:
         shutil.copyfile(csv_file, csv_file_dest)
     except IOError:
-        print("\033[31mФайл Выгрузка.csv не найден\033[0m")
+        print("Файл Выгрузка.csv не найден")
         return
 
     write_xlsx_file(read_csv_file(csv_file_dest))
@@ -289,10 +289,12 @@ def main():
 
     ed = datetime.datetime.now()
     total_time = ed - bd
-    print('\033[32mОбработка завершена\033[0m')
+    print('Обработка завершена')
     print('Время выполения программы: ')
     print(total_time)
     return
 
 
 main()
+print('Нажмите Enter для выхода')
+input()

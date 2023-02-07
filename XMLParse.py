@@ -153,10 +153,10 @@ def shapka_record():
 def main():
     if os.path.exists('./processed_file') == False:
         os.mkdir("processed_file")
-        print('\033[34mСоздана папка processed_file\033[0m')
+        print('Создана папка processed_file')
     if os.path.exists('./source_file') == False:
         os.mkdir("source_file")
-        print('\033[34mСоздана папка source_file. Поместите в нее файлы xml и xlsx для обработки и запустите программу еще раз\033[0m')
+        print('Создана папка source_file. Поместите в нее файлы xml и xlsx для обработки и запустите программу еще раз')
         return
 
     # ищем тот самый файл с расширением xml
@@ -169,13 +169,13 @@ def main():
             count_of_xml_files += 1
 
             if count_of_xml_files > 1:
-                print('\033[31mНайдено более одного файла с расширением xml\033[0m')
+                print('Найдено более одного файла с расширением xml')
                 return
 
             xml_file = entry
 
     if xml_file == '':
-        print('\033[31mФайл c расширением .xml не найден\033[0m')
+        print('Файл c расширением .xml не найден')
         return
 
     bd = datetime.datetime.now()
@@ -229,12 +229,12 @@ def main():
                 if stat:
                     node = node + line + '\n'
     except IOError:
-        print("\033[31mФайл открыт в другой программе. Закройте файл и повторите попытку\033[0m")
+        print("Файл открыт в другой программе. Закройте файл и повторите попытку")
 
     ed = datetime.datetime.now()
     # print(bd)
     # print(ed)
-    print('\033[32mОбработка завершена\033[0m')
+    print('Обработка завершена')
     total_time = ed - bd
     print('Время выполения программы: ')
     print(total_time)
