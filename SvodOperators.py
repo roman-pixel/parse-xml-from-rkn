@@ -6,6 +6,158 @@ from progress.spinner import Spinner
 from operator import itemgetter
 import numpy as np
 
+spinner = Spinner('\033[43mОбработка данных:\033[0m')
+
+
+def data_filter_max_speed(max_speed_data):
+    max_speed_for_sort = []
+
+    max_speed = ''
+    count = 0
+    is_convert = False
+
+    for i in max_speed_data:
+        max_speed_split = i.split(' ')
+
+        if max_speed_split[1] == 'Мб/с':
+            mb_to_kb = int(max_speed_split[0]) * 1000
+            max_speed_split[0] = mb_to_kb
+            max_speed_split[1] = 'Кб/с'
+            is_convert = True
+
+        max_speed_for_sort.append(
+            [int(max_speed_split[0]), max_speed_split[1]])
+
+        count += 1
+
+        if count == len(max_speed_data):
+            count = 0
+            break
+
+    max_speed_for_sort.sort(key=lambda x: x[0], reverse=True)
+
+    if is_convert:
+        speed = round(max_speed_for_sort[0][0] / 1000)
+        max_speed = str(speed) + ' ' + 'Мб/с'
+    else:
+        max_speed = str(max_speed_for_sort[0][0]) + \
+            ' ' + max_speed_for_sort[0][1]
+
+    return max_speed
+
+# def data_count_columns(data):
+
+
+# region этот код вибирал из файла только данные по мтс, мегафону, билайну и теле2
+# def data_filter_operators(data):
+#     data = []
+
+#     for i in data:
+#         if ('МегаФон' in i[7]) or ('МТС' in i[7]) or ('мтс' in i[7]) or ('Т2' in i[7]) or ('Вымпел' in i[7]):
+#             data.append(i)
+
+#     return data
+# endregion
+
+
+def data_writer(work_sheet, data):
+    count = 0
+    count_row = 2
+
+    check_new_fias = []
+    max_speed = []
+
+    is_ts = False
+    is_uslugi_svyazi = False
+
+    for i in data:
+        spinner.next()
+
+        # region
+        if count == 0:
+            check_new_fias.append(i[1])
+
+        if i[1] not in check_new_fias:
+            ts_str = 'нет'
+            uslugi_svyazi_str = 'нет'
+
+            if is_ts:
+                ts_str = 'да'
+            if is_uslugi_svyazi:
+                uslugi_svyazi_str = 'да'
+
+            is_ts = False
+            is_uslugi_svyazi = False
+
+            work_sheet['T' + str(count_row)] = ts_str  # ТС
+            # Услуги связи
+            work_sheet['U' + str(count_row)] = uslugi_svyazi_str
+
+            for row in work_sheet.iter_rows(min_row=count_row, max_row=count_row, min_col=8, max_col=19):
+                for cell in row:
+                    # print(cell.value)
+                    if cell.value is None:
+                        cell.value = 'нет'
+
+            # этот говнокод ничто иное, как суммарная информация по всем операторам
+            svod_mts = 'МТС - GSM - '+str(work_sheet['H' + str(count_row)].value)+'; МТС - UMTS - '+str(
+                work_sheet['I' + str(count_row)].value)+'; МТС - LTE - '+str(work_sheet['J' + str(count_row)].value)+'; '
+            svod_megafon = 'МегаФон - GSM - '+str(work_sheet['K' + str(count_row)].value)+'; МегаФон - UMTS - '+str(
+                work_sheet['L' + str(count_row)].value)+'; МегаФон - LTE - '+str(work_sheet['M' + str(count_row)].value)+'; '
+            svod_beeline = 'Билайн - GSM - '+str(work_sheet['N' + str(count_row)].value)+'; Билайн - UMTS - '+str(
+                work_sheet['O' + str(count_row)].value)+'; Билайн - LTE - '+str(work_sheet['P' + str(count_row)].value)+'; '
+            svod_tele2 = 'Т2 - GSM - '+str(work_sheet['Q' + str(count_row)].value)+'; Т2 - UMTS - '+str(
+                work_sheet['R' + str(count_row)].value)+'; Т2 - LTE - '+str(work_sheet['S' + str(count_row)].value)+';'
+
+            work_sheet['AA' + str(count_row)] = svod_mts + \
+                svod_megafon + svod_beeline + svod_tele2
+
+            # запись максимальной скорости
+            work_sheet['V' + str(count_row)] = data_filter_max_speed(max_speed)
+            max_speed.clear()
+
+            check_new_fias.append(i[1])
+            count_row += 1
+        # endregion
+
+        max_speed.append(i[10])
+
+        work_sheet['A' + str(count_row)] = i[0]  # ID
+        work_sheet['B' + str(count_row)] = i[1]  # ФИАС
+        work_sheet['C' + str(count_row)] = i[2]  # код региона
+        work_sheet['D' + str(count_row)] = i[3]  # наименование региона
+        work_sheet['E' + str(count_row)] = i[4]  # город
+        work_sheet['F' + str(count_row)] = i[5]  # район
+        work_sheet['G' + str(count_row)] = i[6]  # населенный пункт
+        work_sheet['Z' + str(count_row)] = i[17]  # url для проверки'
+
+        if 'МТС' in i[7] or 'мтс' in i[7]:
+            work_sheet['H' + str(count_row)] = i[11]
+            work_sheet['I' + str(count_row)] = i[12]
+            work_sheet['J' + str(count_row)] = i[13]
+        if 'МегаФон' in i[7]:
+            work_sheet['K' + str(count_row)] = i[11]
+            work_sheet['L' + str(count_row)] = i[12]
+            work_sheet['M' + str(count_row)] = i[13]
+        if 'Вымпелк' in i[7]:
+            work_sheet['N' + str(count_row)] = i[11]
+            work_sheet['O' + str(count_row)] = i[12]
+            work_sheet['P' + str(count_row)] = i[13]
+        if 'Т2' in i[7]:
+            work_sheet['Q' + str(count_row)] = i[11]
+            work_sheet['R' + str(count_row)] = i[12]
+            work_sheet['S' + str(count_row)] = i[13]
+
+        if i[8] == 'да':
+            is_ts = True
+        if i[9] == 'да':
+            is_uslugi_svyazi = True
+
+        count += 1
+
+    spinner.finish()
+    return
+
 
 def write_xlsx_file(data):
 
@@ -13,7 +165,7 @@ def write_xlsx_file(data):
     work_sheet = work_book.active
     work_sheet.title = "Свод по операторам"
 
-    # Заполняем шапку таблицы
+    # region Заполняем шапку таблицы
     work_sheet['A1'] = 'Уникальный идентификатор населенного пункта в информационной системе Роскомнадзора'
     work_sheet['B1'] = 'Код ФИАС'
     work_sheet['C1'] = 'Код региона'
@@ -50,109 +202,22 @@ def write_xlsx_file(data):
     # Билайн - GSM-900; Билайн - UMTS- нет; Билайн - LTE - нет;
     # Мегафон - GSM-нет; Мегафон - UMTS- нет; Мегафон - LTE - нет;
     # Теле2 - GSM-нет; Теле2 - UMTS- нет; Теле2 - LTE - нет
-
-    # region переменные
-    count = 0
-    count_row = 2
-    data_with_four_operators = []
-    check_new_fias = []
-    uslugi_TS = 'нет'
-    telematicheskie_uslugi = 'нет'
-    # sum_tv = 0
-    # sum_tax = 0
-    # sum_point = 0
-    # file_non_doubles = open('non_doubles.txt', 'w')
-    # file_data_with_four_operators = open('data_with_four_operators.txt', 'w')
     # endregion
 
+    file_data = open('data.txt', 'w')
+
     for i in data:
-        # if i[8] == 'да':
-        #     uslugi_TS = 'да'
-        # if i[9] == 'да':
-        #     telematicheskie_uslugi = 'да'
+        file_data.write(str(i[1]) + ' - ' + str(i[6]) + ' - ' + str(i[8]) +
+                        ' - ' + str(i[9]) + ' - ' + str(i[10]) + ' - ' + str(i[7]) + '\n')
+    file_data.close()
 
-        if ('МегаФон' in i[7]) or ('МТС' in i[7]) or ('мтс' in i[7]) or ('Т2' in i[7]) or ('Вымпел' in i[7]):
-            data_with_four_operators.append(i)
-
-    # for i in data_with_four_operators:
-    #     file_data_with_four_operators.write(str(i) + '\n')
-    # file_data_with_four_operators.close()
-
-    # n = []
-    # for i in data_with_four_operators:
-    #     if i[1] not in n:
-    #         n.append(i[1])
-    #         file_non_doubles.write(str(i) + '\n')
-    # file_non_doubles.close()
-
-    #############################################
-
-    spinner = Spinner('\033[43mОбработка данных:\033[0m')
-
-    for i in data_with_four_operators:
-        spinner.next()
-
-        if count == 0:
-            check_new_fias.append(i[1])
-
-        if i[1] not in check_new_fias:
-            for row in work_sheet.iter_rows(min_row=count_row, max_row=count_row, min_col=8, max_col=19):
-                for cell in row:
-                    # print(cell.value)
-                    if cell.value is None:
-                        cell.value = 'нет'
-
-            svod_mts = 'МТС - GSM - '+str(work_sheet['H' + str(count_row)].value)+'; МТС - UMTS - '+str(
-                work_sheet['I' + str(count_row)].value)+'; МТС - LTE - '+str(work_sheet['J' + str(count_row)].value)+';'
-            svod_biline = 'Билайн - GSM - '+str(work_sheet['K' + str(count_row)].value)+'; Билайн - UMTS - '+str(
-                work_sheet['L' + str(count_row)].value)+'; Билайн - LTE - '+str(work_sheet['M' + str(count_row)].value)+';'
-            svod_megafon = 'Мегафон - GSM - '+str(work_sheet['N' + str(count_row)].value)+'; Мегафон - UMTS - '+str(
-                work_sheet['O' + str(count_row)].value)+'; Мегафон - LTE - '+str(work_sheet['P' + str(count_row)].value)+';'
-            
-            work_sheet['AA' + str(count_row)] = svod_mts + \
-                svod_biline + svod_megafon
-
-            check_new_fias.append(i[1])
-            count_row += 1
-
-        work_sheet['A' + str(count_row)] = i[0]  # ID
-        work_sheet['B' + str(count_row)] = i[1]  # ФИАС
-        work_sheet['C' + str(count_row)] = i[2]  # код региона
-        work_sheet['D' + str(count_row)] = i[3]  # наименование региона
-        work_sheet['E' + str(count_row)] = i[4]  # город
-        work_sheet['F' + str(count_row)] = i[5]  # район
-        work_sheet['G' + str(count_row)] = i[6]  # населенный пункт
-        work_sheet['Z' + str(count_row)] = i[17]  # url для проверки'
-
-        if 'МТС' in i[7] or 'мтс' in i[7]:
-            work_sheet['H' + str(count_row)] = i[11]
-            work_sheet['I' + str(count_row)] = i[12]
-            work_sheet['J' + str(count_row)] = i[13]
-        if 'МегаФон' in i[7]:
-            work_sheet['K' + str(count_row)] = i[11]
-            work_sheet['L' + str(count_row)] = i[12]
-            work_sheet['M' + str(count_row)] = i[13]
-        if 'Вымпелк' in i[7]:
-            work_sheet['N' + str(count_row)] = i[11]
-            work_sheet['O' + str(count_row)] = i[12]
-            work_sheet['P' + str(count_row)] = i[13]
-        if 'Т2' in i[7]:
-            work_sheet['Q' + str(count_row)] = i[11]
-            work_sheet['R' + str(count_row)] = i[12]
-            work_sheet['S' + str(count_row)] = i[13]
-
-        count += 1
-
-        # if count < len(data_with_four_operators)-2:
-        #     count += 1
-
-    spinner.finish()
+    data_writer(work_sheet, data)
 
     try:
         work_book.save('./processed_file/%s' % 'Свод по операторам.xlsx')
     except PermissionError:
         print(
-            "\033[31mФайл открыт в другой программе. Закройте файл и повторите попытку \033[0m")
+            "\033[31mФайл открыт в другой программе. Закройте файл и повторите попытку\033[0m")
         return
 
 
@@ -182,7 +247,7 @@ def read_csv_file(file_name):
 
     except IOError:
         print(
-            "\033[31mФайл открыт в другой программе. Закройте файл и повторите попытку \033[0m")
+            "\033[31mФайл открыт в другой программе. Закройте файл и повторите попытку\033[0m")
         return
 
     return data
@@ -197,7 +262,7 @@ def main():
     try:
         shutil.copyfile(csv_file, csv_file_dest)
     except IOError:
-        print("\033[31mФайл itog.csv не найден \033[0m")
+        print("\033[31mФайл itog.csv не найден\033[0m")
         return
 
     write_xlsx_file(read_csv_file(csv_file_dest))
