@@ -5,11 +5,15 @@ import openpyxl
 from progress.spinner import Spinner
 from operator import itemgetter
 import numpy as np
+import os
 
+# просто крутилка в консоли, а не о чем вы подумали
 spinner = Spinner('\033[43mОбработка данных:\033[0m')
 
 
 def data_filter_max_speed(max_speed_data):
+    # поиск макисмальной скорости у населенного пункта
+
     max_speed_for_sort = []
 
     max_speed = ''
@@ -19,6 +23,7 @@ def data_filter_max_speed(max_speed_data):
     for i in max_speed_data:
         max_speed_split = i.split(' ')
 
+        # перевод мегабит в килобит для сортировки
         if max_speed_split[1] == 'Мб/с':
             mb_to_kb = int(max_speed_split[0]) * 1000
             max_speed_split[0] = mb_to_kb
@@ -37,6 +42,7 @@ def data_filter_max_speed(max_speed_data):
     max_speed_for_sort.sort(key=lambda x: x[0], reverse=True)
 
     if is_convert:
+        # перевод килобит в мегабит для вывода
         speed = round(max_speed_for_sort[0][0] / 1000)
         max_speed = str(speed) + ' ' + 'Мб/с'
     else:
@@ -45,19 +51,22 @@ def data_filter_max_speed(max_speed_data):
 
     return max_speed
 
-# def data_count_columns(data):
 
+def data_sum_columns(columns_for_sum):
+    # суммирование столбцов по вертикали
+    sum = np.sum(columns_for_sum, axis=0)
+    return sum
 
-# region этот код вибирал из файла только данные по мтс, мегафону, билайну и теле2
-# def data_filter_operators(data):
-#     data = []
+    # region этот код вибирал из файла только данные по мтс, мегафону, билайну и теле2
+    # def data_filter_operators(data):
+    #     data = []
 
-#     for i in data:
-#         if ('МегаФон' in i[7]) or ('МТС' in i[7]) or ('мтс' in i[7]) or ('Т2' in i[7]) or ('Вымпел' in i[7]):
-#             data.append(i)
+    #     for i in data:
+    #         if ('МегаФон' in i[7]) or ('МТС' in i[7]) or ('мтс' in i[7]) or ('Т2' in i[7]) or ('Вымпел' in i[7]):
+    #             data.append(i)
 
-#     return data
-# endregion
+    #     return data
+    # endregion
 
 
 def data_writer(work_sheet, data):
@@ -66,6 +75,7 @@ def data_writer(work_sheet, data):
 
     check_new_fias = []
     max_speed = []
+    columns_for_sum = []
 
     is_ts = False
     is_uslugi_svyazi = False
@@ -112,15 +122,32 @@ def data_writer(work_sheet, data):
             work_sheet['AA' + str(count_row)] = svod_mts + \
                 svod_megafon + svod_beeline + svod_tele2
 
+            # замена ячеек с циферами на 'да'
+            if work_sheet['H' + str(count_row)].value != 'нет':
+                work_sheet['H' + str(count_row)] = 'да'
+            if work_sheet['K' + str(count_row)].value != 'нет':
+                work_sheet['K' + str(count_row)] = 'да'
+            if work_sheet['N' + str(count_row)].value != 'нет': 
+                work_sheet['N' + str(count_row)] = 'да'
+            if work_sheet['Q' + str(count_row)].value != 'нет':
+                work_sheet['Q' + str(count_row)] = 'да'
+
             # запись максимальной скорости
             work_sheet['V' + str(count_row)] = data_filter_max_speed(max_speed)
             max_speed.clear()
+
+            sum = data_sum_columns(columns_for_sum)
+            work_sheet['W' + str(count_row)] = sum[0]  # кол-во каналов
+            work_sheet['X' + str(count_row)] = sum[1]  # кол-во таксофонов
+            work_sheet['Y' + str(count_row)] = sum[2]  # кол-во точек доступа
+            columns_for_sum.clear()
 
             check_new_fias.append(i[1])
             count_row += 1
         # endregion
 
         max_speed.append(i[10])
+        columns_for_sum.append([int(i[14]), int(i[15]), int(i[16])])
 
         work_sheet['A' + str(count_row)] = i[0]  # ID
         work_sheet['B' + str(count_row)] = i[1]  # ФИАС
@@ -131,6 +158,7 @@ def data_writer(work_sheet, data):
         work_sheet['G' + str(count_row)] = i[6]  # населенный пункт
         work_sheet['Z' + str(count_row)] = i[17]  # url для проверки'
 
+        # запись операторов мтс, мегафон, билайн, теле2
         if 'МТС' in i[7] or 'мтс' in i[7]:
             work_sheet['H' + str(count_row)] = i[11]
             work_sheet['I' + str(count_row)] = i[12]
@@ -185,7 +213,7 @@ def write_xlsx_file(data):
     work_sheet['Q1'] = 'Теле2 GSM'
     work_sheet['R1'] = 'Теле2 UMTS'
     work_sheet['S1'] = 'Теле2 LTE'
-    work_sheet['T1'] = 'Услуги метсной ТС'
+    work_sheet['T1'] = 'Услуги местной ТС'
     work_sheet['U1'] = 'Телематические услуги связи'
     # телематические услуги связи (скорость) и единицы измероение в одну ячейку
     work_sheet['V1'] = 'Телематические услуги связи (максимальная скорость передачи данных)'
@@ -204,15 +232,9 @@ def write_xlsx_file(data):
     # Теле2 - GSM-нет; Теле2 - UMTS- нет; Теле2 - LTE - нет
     # endregion
 
-    file_data = open('data.txt', 'w')
-
-    for i in data:
-        file_data.write(str(i[1]) + ' - ' + str(i[6]) + ' - ' + str(i[8]) +
-                        ' - ' + str(i[9]) + ' - ' + str(i[10]) + ' - ' + str(i[7]) + '\n')
-    file_data.close()
-
     data_writer(work_sheet, data)
 
+    # сохранение получившейся какахи
     try:
         work_book.save('./processed_file/%s' % 'Свод по операторам.xlsx')
     except PermissionError:
@@ -224,7 +246,6 @@ def write_xlsx_file(data):
 def read_csv_file(file_name):
     data = []
     count = 0
-    file = open('sorted.txt', 'w', encoding='utf-8')
     try:
         with open(file_name, 'r', newline='', encoding='Windows-1251') as r_file:
             reader = csv.reader(r_file, delimiter=';')
@@ -235,15 +256,12 @@ def read_csv_file(file_name):
                     continue
                 # объединяем показания скорости и единицы измерения
                 merge_rows = row[11] + ' ' + row[12]
+                # все необходимые данные
                 data.append([row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
                              merge_rows, row[13], row[14], row[15], row[16], row[17], row[18], row[19]])
 
-            # сортируем по населенному пункту и району
+            # сортируем по населенному пункту и району (фиас для контроля, но и без него заэбись)
             data = sorted(data, key=itemgetter(6, 5, 1))
-
-            for i in data:
-                file.write(str(i)+'\n')
-            file.close()
 
     except IOError:
         print(
@@ -266,6 +284,8 @@ def main():
         return
 
     write_xlsx_file(read_csv_file(csv_file_dest))
+
+    os.remove(csv_file_dest)
 
     ed = datetime.datetime.now()
     total_time = ed - bd
