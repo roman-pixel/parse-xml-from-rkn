@@ -1,5 +1,7 @@
 # XMLParse
 
+[![Button Icon]][Link] 
+
 ## Как пользоваться программой
 
 - Запустите программу. Она создаст 2 папки
@@ -22,3 +24,6 @@ pyinstaller --onefile XMLParse.py SvodOperators.py
 ```
 
 Файлы программ указываются в порядке их выполнения
+
+[Button Icon]: https://img.shields.io/badge/Installation-EF2D5E?style=for-the-badge&logoColor=white&logo=DocuSign
+[Link]: https://disk.yandex.ru/d/y3RRJiChtpWCww
