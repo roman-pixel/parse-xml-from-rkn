@@ -69,6 +69,71 @@ def data_sum_columns(columns_for_sum):
     # endregion
 
 
+def costul(i, check_new_fias, work_sheet, max_speed, columns_for_sum, is_ts, is_uslugi_svyazi, count_row):
+    ts_str = 'нет'
+    uslugi_svyazi_str = 'нет'
+
+    if is_ts:
+        ts_str = 'да'
+    if is_uslugi_svyazi:
+        uslugi_svyazi_str = 'да'
+
+    is_ts = False
+    is_uslugi_svyazi = False
+
+    work_sheet['T' + str(count_row)] = ts_str  # ТС
+    # Услуги связи
+    work_sheet['U' + str(count_row)] = uslugi_svyazi_str
+
+    for row in work_sheet.iter_rows(min_row=count_row, max_row=count_row, min_col=8, max_col=19):
+        for cell in row:
+            # print(cell.value)
+            if cell.value is None:
+                cell.value = 'нет'
+
+    # этот говнокод ничто иное, как суммарная информация по всем операторам
+    svod_mts = 'МТС - GSM - '+str(work_sheet['H' + str(count_row)].value)+'; МТС - UMTS - '+str(
+        work_sheet['I' + str(count_row)].value)+'; МТС - LTE - '+str(work_sheet['J' + str(count_row)].value)+'; '
+    svod_megafon = 'МегаФон - GSM - '+str(work_sheet['K' + str(count_row)].value)+'; МегаФон - UMTS - '+str(
+        work_sheet['L' + str(count_row)].value)+'; МегаФон - LTE - '+str(work_sheet['M' + str(count_row)].value)+'; '
+    svod_beeline = 'Билайн - GSM - '+str(work_sheet['N' + str(count_row)].value)+'; Билайн - UMTS - '+str(
+        work_sheet['O' + str(count_row)].value)+'; Билайн - LTE - '+str(work_sheet['P' + str(count_row)].value)+'; '
+    svod_tele2 = 'Т2 - GSM - '+str(work_sheet['Q' + str(count_row)].value)+'; Т2 - UMTS - '+str(
+        work_sheet['R' + str(count_row)].value)+'; Т2 - LTE - '+str(work_sheet['S' + str(count_row)].value)+';'
+
+    work_sheet['AA' + str(count_row)] = svod_mts + \
+        svod_megafon + svod_beeline + svod_tele2
+
+    # замена ячеек с циферами на 'да'
+    if work_sheet['H' + str(count_row)].value != 'нет':
+        work_sheet['H' + str(count_row)] = 'да'
+    if work_sheet['K' + str(count_row)].value != 'нет':
+        work_sheet['K' + str(count_row)] = 'да'
+    if work_sheet['N' + str(count_row)].value != 'нет':
+        work_sheet['N' + str(count_row)] = 'да'
+    if work_sheet['Q' + str(count_row)].value != 'нет':
+        work_sheet['Q' + str(count_row)] = 'да'
+
+    # запись максимальной скорости
+    work_sheet['V' + str(count_row)] = data_filter_max_speed(max_speed)
+    max_speed.clear()
+
+    sum = data_sum_columns(columns_for_sum)
+    work_sheet['W' + str(count_row)] = sum[0]  # кол-во каналов
+    work_sheet['X' + str(count_row)] = sum[1]  # кол-во таксофонов
+    work_sheet['Y' + str(count_row)] = sum[2]  # кол-во точек доступа
+    columns_for_sum.clear()
+
+    # if count_row == 4809:
+    #     print('')
+
+    # if count_row == 4810:
+    #     print('')
+
+    check_new_fias.append(i[1])
+    count_row += 1
+
+
 def data_writer(work_sheet, data):
     count = 0
     count_row = 2
@@ -127,7 +192,7 @@ def data_writer(work_sheet, data):
                 work_sheet['H' + str(count_row)] = 'да'
             if work_sheet['K' + str(count_row)].value != 'нет':
                 work_sheet['K' + str(count_row)] = 'да'
-            if work_sheet['N' + str(count_row)].value != 'нет': 
+            if work_sheet['N' + str(count_row)].value != 'нет':
                 work_sheet['N' + str(count_row)] = 'да'
             if work_sheet['Q' + str(count_row)].value != 'нет':
                 work_sheet['Q' + str(count_row)] = 'да'
@@ -141,6 +206,12 @@ def data_writer(work_sheet, data):
             work_sheet['X' + str(count_row)] = sum[1]  # кол-во таксофонов
             work_sheet['Y' + str(count_row)] = sum[2]  # кол-во точек доступа
             columns_for_sum.clear()
+
+            # if count_row == 4809:
+            #     print('')
+
+            # if count_row == 4810:
+            #     print('')
 
             check_new_fias.append(i[1])
             count_row += 1
@@ -182,6 +253,10 @@ def data_writer(work_sheet, data):
             is_uslugi_svyazi = True
 
         count += 1
+
+        if count == len(data):
+            costul(i, check_new_fias, work_sheet, max_speed,
+                   columns_for_sum, is_ts, is_uslugi_svyazi, count_row)
 
     spinner.finish()
     return
@@ -246,6 +321,10 @@ def write_xlsx_file(data):
 def read_csv_file(file_name):
     data = []
     count = 0
+
+    # file_data_before_sort = open('data_before_sort.txt', 'w')
+    # file_data_sort = open('data_sort.txt', 'w')
+
     try:
         with open(file_name, 'r', newline='', encoding='Windows-1251') as r_file:
             reader = csv.reader(r_file, delimiter=';')
@@ -260,8 +339,22 @@ def read_csv_file(file_name):
                 data.append([row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
                              merge_rows, row[13], row[14], row[15], row[16], row[17], row[18], row[19]])
 
+            # n1 = []
+            # for i in data:
+            #     if i[1] not in n1:
+            #         n1.append(i[1])
+            #         file_data_before_sort.write(str(i) + '\n')
+            # file_data_before_sort.close()
+
             # сортируем по населенному пункту и району (фиас для контроля, но и без него заэбись)
-            data = sorted(data, key=itemgetter(6, 5, 1))
+            data = sorted(data, key=itemgetter(6, 5))
+
+            # n = []
+            # for i in data:
+            #     if i[1] not in n:
+            #         n.append(i[1])
+            #         file_data_sort.write(str(i) + '\n')
+            # file_data_sort.close()
 
     except IOError:
         print(
@@ -297,4 +390,4 @@ def main():
 
 main()
 print('Нажмите Enter для выхода')
-input()
+# input()
