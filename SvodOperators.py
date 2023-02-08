@@ -57,7 +57,7 @@ def data_sum_columns(columns_for_sum):
     sum = np.sum(columns_for_sum, axis=0)
     return sum
 
-    # region этот код вибирал из файла только данные по мтс, мегафону, билайну и теле2
+    # region этот код выбирал из файла только данные по мтс, мегафону, билайну и теле2
     # def data_filter_operators(data):
     #     data = []
 

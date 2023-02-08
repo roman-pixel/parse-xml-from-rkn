@@ -184,7 +184,6 @@ def main():
     node = ''
     fias_guid = ''
     count_iter = 0
-    lines = 0
 
     try:
         with open('./source_file/%s' % xml_file, 'r', encoding='utf-8') as f, open('./processed_file/%s' % 'Выгрузка.csv', 'w', encoding='windows-1251') as fw:
@@ -232,8 +231,6 @@ def main():
         print("Файл открыт в другой программе. Закройте файл и повторите попытку")
 
     ed = datetime.datetime.now()
-    # print(bd)
-    # print(ed)
     print('Обработка завершена')
     total_time = ed - bd
     print('Время выполения программы: ')
