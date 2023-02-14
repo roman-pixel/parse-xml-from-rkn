@@ -25,6 +25,7 @@ pyinstaller --onefile XMLParse.py SvodOperators.py
 ```
 
 Файлы программ указываются в порядке их выполнения
+
 *Вы также можете сделать сборку с помощью программы AvtoSborka.py на вашем локальном компьютере*
 
 [Button Icon]: https://img.shields.io/badge/Installation-EF2D5E?style=for-the-badge&logoColor=white&logo=DocuSign
