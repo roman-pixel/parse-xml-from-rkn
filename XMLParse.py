@@ -151,6 +151,8 @@ def shapka_record():
 
 
 def main():
+    print('Начало обработки файла xml (это может занять неcколько минут)')
+
     if os.path.exists('./processed_file') == False:
         os.mkdir("processed_file")
         print('Создана папка processed_file')
@@ -231,7 +233,8 @@ def main():
         print("Файл открыт в другой программе. Закройте файл и повторите попытку")
 
     ed = datetime.datetime.now()
-    print('Обработка завершена')
+    print('Обработка xml завершена')
+    print('Файл Выгрузка.csv сохранен в папке processed_file')
     total_time = ed - bd
     print('Время выполения программы: ')
     print(total_time)

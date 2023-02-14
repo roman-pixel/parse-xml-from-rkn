@@ -245,21 +245,33 @@ def data_writer(work_sheet, data):
 
         # запись операторов мтс, мегафон, билайн, теле2
         if 'МТС' in i[7] or 'мтс' in i[7]:
-            work_sheet['H' + str(count_row)] = i[11]
-            work_sheet['I' + str(count_row)] = i[12]
-            work_sheet['J' + str(count_row)] = i[13]
+            if work_sheet['H' + str(count_row)].value == 'нет' or work_sheet['H' + str(count_row)].value is None:
+                work_sheet['H' + str(count_row)] = i[11]
+            if work_sheet['I' + str(count_row)].value == 'нет' or work_sheet['I' + str(count_row)].value is None:
+                work_sheet['I' + str(count_row)] = i[12]
+            if work_sheet['J' + str(count_row)].value == 'нет' or work_sheet['J' + str(count_row)].value is None:
+                work_sheet['J' + str(count_row)] = i[13]
         if 'МегаФон' in i[7]:
-            work_sheet['K' + str(count_row)] = i[11]
-            work_sheet['L' + str(count_row)] = i[12]
-            work_sheet['M' + str(count_row)] = i[13]
+            if work_sheet['K' + str(count_row)].value == 'нет' or work_sheet['K' + str(count_row)].value is None:
+                work_sheet['K' + str(count_row)] = i[11]
+            if work_sheet['L' + str(count_row)].value == 'нет' or work_sheet['L' + str(count_row)].value is None:
+                work_sheet['L' + str(count_row)] = i[12]
+            if work_sheet['M' + str(count_row)].value == 'нет' or work_sheet['M' + str(count_row)].value is None:
+                work_sheet['M' + str(count_row)] = i[13]
         if 'Вымпелк' in i[7]:
-            work_sheet['N' + str(count_row)] = i[11]
-            work_sheet['O' + str(count_row)] = i[12]
-            work_sheet['P' + str(count_row)] = i[13]
+            if work_sheet['N' + str(count_row)].value == 'нет' or work_sheet['N' + str(count_row)].value is None:
+                work_sheet['N' + str(count_row)] = i[11]
+            if work_sheet['O' + str(count_row)].value == 'нет' or work_sheet['O' + str(count_row)].value is None:
+                work_sheet['O' + str(count_row)] = i[12]
+            if work_sheet['P' + str(count_row)].value == 'нет' or work_sheet['P' + str(count_row)].value is None:
+                work_sheet['P' + str(count_row)] = i[13]
         if 'Т2' in i[7]:
-            work_sheet['Q' + str(count_row)] = i[11]
-            work_sheet['R' + str(count_row)] = i[12]
-            work_sheet['S' + str(count_row)] = i[13]
+            if work_sheet['Q' + str(count_row)].value == 'нет' or work_sheet['Q' + str(count_row)].value is None:
+                work_sheet['Q' + str(count_row)] = i[11]
+            if work_sheet['R' + str(count_row)].value == 'нет' or work_sheet['R' + str(count_row)].value is None:
+                work_sheet['R' + str(count_row)] = i[12]
+            if work_sheet['S' + str(count_row)].value == 'нет' or work_sheet['S' + str(count_row)].value is None:
+                work_sheet['S' + str(count_row)] = i[13]
 
         if i[8] == 'да':
             is_ts = True
@@ -368,7 +380,7 @@ def read_csv_file(file_name):
                              merge_rows, row[13], row[14], row[15], row[16], row[17], row[18], row[19]])
 
             # сортируем по населенному пункту и району (фиас для контроля, но и без него заэбись)
-            data = sorted(data, key=itemgetter(6, 5))
+            data = sorted(data, key=itemgetter(6, 5, 1))
 
             # n = []
             # for i in data:
@@ -389,6 +401,9 @@ def read_csv_file(file_name):
 
 
 def main():
+    print('###############################################')
+    print('Начало обработки файла Выгрузка.csv')
+
     bd = datetime.datetime.now()
 
     csv_file = './processed_file/%s' % 'Выгрузка.csv'
@@ -406,7 +421,8 @@ def main():
 
     ed = datetime.datetime.now()
     total_time = ed - bd
-    print('Обработка завершена')
+    print('Обработка файла Выгрузка.csv завершена')
+    print('Файл Свод по операторам.xlsx сохранен в папке processed_file')
     print('Время выполения программы: ')
     print(total_time)
     return
